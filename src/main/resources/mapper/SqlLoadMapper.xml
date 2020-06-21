@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wlliu.dao.SqlLoadDao">
+    <resultMap id="SqlLoadMap" type="SqlLoad">
+        <result column="tableName" property="tableName" javaType="STRING"/>
+        <result column="signalFile" property="signalFile" javaType="STRING"/>
+        <result column="cmdSql" property="cmdSql" javaType="STRING"/>
+        <result column="piDate" property="piDate" javaType="STRING"/>
+        <result column="piNumber" property="piNumber" javaType="STRING"/>
+    </resultMap>
+
+    <select id="getAllSqlLoad" resultMap="SqlLoadMap">
+        select t.table_name              tableName,
+               t.data_path || t.import_source || t.delimiter || t.pi_date || t.delimiter || t.signal_file_name || '_' ||
+               case when t.run_tactis = 'BATCH' then t.pi_date || '_' || t.pi_number else t.pi_date end ||
+               t.signal_file_name_suffix signalFile,
+               t.command_prefix ||
+               ' control= ' || t.control_path || t.control_name ||
+               ' data= ' || t.data_path || t.import_source || t.delimiter || t.pi_date || t.delimiter ||
+               t.data_file_name || '_' ||
+               case when t.run_tactis = 'BATCH' then t.pi_date || '_' || t.pi_number else t.pi_date end ||
+               t.data_file_name_suffix ||
+               ' log= ' || t.log_path || t.table_name || t.delimiter || T.Table_Name || '_' ||
+               to_char(sysdate, 'YYYYMMDDHH24MISS') || '.log ' ||
+               ' bad= ' || t.bad_path || t.table_name || t.delimiter || T.Table_Name || '_' ||
+               to_char(sysdate, 'YYYYMMDDHH24MISS') || '.bad ' ||
+               t.command_suffix          cmdSql,
+               t.pi_date                 piDate,
+               t.pi_number               piNumber
+        from (select *
+              from sql_load t1
+              where t1.run_tactis = 'D'
+              union all
+              select *
+              from sql_load t2
+              where t2.run_tactis = 'M'
+                and substr(to_char(sysdate, 'yyyymmdd'), 7) = t2.run_date
+              union all
+              select *
+              from sql_load t3
+              where t3.run_tactis = 'BATCH') t
+        where t.run_status = '0'
+          and t.running = '0'
+    </select>
+
+    <update id="initStatus">
+        update sql_load t
+        set t.pi_date_bk    = '00000000',
+            t.pi_number     = '01',
+            t.pi_number_bk  = '00',
+            t.running       = '0',
+            t.run_status    = '0',
+            t.check_status  = '0',
+            t.select_status = '0',
+            t.pi_date       = (case
+                                   when t.run_tactis = 'D'
+                                       then to_char(sysdate - 1, 'yyyymmdd')
+                                   when t.run_tactis = 'BATCH'
+                                       then to_char(sysdate, 'yyyymmdd')
+                                   when t.run_tactis = 'M'
+                                       then to_char(last_day(add_months(sysdate, -1)), 'yyyymmdd')
+                end)
+    </update>
+
+
+</mapper>
