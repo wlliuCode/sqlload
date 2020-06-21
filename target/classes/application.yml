@@ -1,9 +1,0 @@
-spring:
-  datasource:
-    driver-class-name: oracle.jdbc.driver.OracleDriver
-    url: jdbc:oracle:thin:@//192.168.137.101:1521/ORCL
-    username: wlliu
-    password: oracle123
-mybatis:
-  type-aliases-package: com.wlliu.entity
-  mapper-locations: classpath:mapper/*.xml
