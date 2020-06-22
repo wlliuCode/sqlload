@@ -22,9 +22,9 @@
                case when t.run_tactis = 'BATCH' then t.pi_date || '_' || t.pi_number else t.pi_date end ||
                t.data_file_name_suffix ||
                ' log= ' || t.log_path || t.table_name || t.delimiter || T.Table_Name || '_' ||
-               to_char(sysdate, 'YYYYMMDDHH24MISS') || '.log ' ||
+               to_char(sysdate, 'yyyyMMddHH24MISS') || '.log ' ||
                ' bad= ' || t.bad_path || t.table_name || t.delimiter || T.Table_Name || '_' ||
-               to_char(sysdate, 'YYYYMMDDHH24MISS') || '.bad ' ||
+               to_char(sysdate, 'yyyyMMddHH24MISS') || '.bad ' ||
                t.command_suffix          cmdSql,
                t.pi_date                 piDate,
                t.pi_number               piNumber
@@ -35,7 +35,7 @@
               select *
               from sql_load t2
               where t2.run_tactis = 'M'
-                and substr(to_char(sysdate, 'yyyymmdd'), 7) = t2.run_date
+                and substr(to_char(sysdate, 'yyyyMMdd'), 7) = t2.run_date
               union all
               select *
               from sql_load t3
@@ -55,11 +55,11 @@
             t.select_status = '0',
             t.pi_date       = (case
                                    when t.run_tactis = 'D'
-                                       then to_char(sysdate - 1, 'yyyymmdd')
+                                       then to_char(sysdate - 1, 'yyyyMMdd')
                                    when t.run_tactis = 'BATCH'
-                                       then to_char(sysdate, 'yyyymmdd')
+                                       then to_char(sysdate, 'yyyyMMdd')
                                    when t.run_tactis = 'M'
-                                       then to_char(last_day(add_months(sysdate, -1)), 'yyyymmdd')
+                                       then to_char(last_day(add_months(sysdate, -1)), 'yyyyMMdd')
                 end)
     </update>
 
@@ -106,9 +106,9 @@
                case when t.run_tactis = 'BATCH' then t.pi_date || '_' || t.pi_number else t.pi_date end ||
                t.data_file_name_suffix ||
                ' log= ' || t.log_path || t.table_name || t.delimiter || T.Table_Name || '_' ||
-               to_char(sysdate, 'YYYYMMDDHH24MISS') || '.log ' ||
+               to_char(sysdate, 'yyyyMMddHH24MISS') || '.log ' ||
                ' bad= ' || t.bad_path || t.table_name || t.delimiter || T.Table_Name || '_' ||
-               to_char(sysdate, 'YYYYMMDDHH24MISS') || '.bad ' ||
+               to_char(sysdate, 'yyyyMMddHH24MISS') || '.bad ' ||
                t.command_suffix          cmdSql,
                t.pi_date                 piDate,
                t.pi_number               piNumber
@@ -119,7 +119,7 @@
               select *
               from sql_load t2
               where t2.run_tactis = 'M'
-                and substr(to_char(sysdate, 'yyyymmdd'), 7) = t2.run_date
+                and substr(to_char(sysdate, 'yyyyMMdd'), 7) = t2.run_date
               union all
               select *
               from sql_load t3
