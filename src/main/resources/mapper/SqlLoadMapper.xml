@@ -63,5 +63,69 @@
                 end)
     </update>
 
+    <select id="getSqlLoadByName" parameterType="STRING" resultMap="SqlLoadMap">
+        select t.table_name              tableName,
+               t.data_path || t.import_source || t.delimiter || t.pi_date || t.delimiter || t.signal_file_name || '_' ||
+               case when t.run_tactis = 'BATCH' then t.pi_date || '_' || t.pi_number else t.pi_date end ||
+               t.signal_file_name_suffix signalFile,
+               t.command_prefix ||
+               ' control= ' || t.control_path || t.control_name ||
+               ' data= ' || t.data_path || t.import_source || t.delimiter || t.pi_date || t.delimiter ||
+               t.data_file_name || '_' ||
+               case when t.run_tactis = 'BATCH' then t.pi_date || '_' || t.pi_number else t.pi_date end ||
+               t.data_file_name_suffix ||
+               ' log= ' || t.log_path || t.table_name || t.delimiter || T.Table_Name || '_' ||
+               to_char(sysdate, 'YYYYMMDDHH24MISS') || '.log ' ||
+               ' bad= ' || t.bad_path || t.table_name || t.delimiter || T.Table_Name || '_' ||
+               to_char(sysdate, 'YYYYMMDDHH24MISS') || '.bad ' ||
+               t.command_suffix          cmdSql,
+               t.pi_date                 piDate,
+               t.pi_number               piNumber
+        from (select *
+              from sql_load t1
+              where t1.run_tactis = 'D'
+              union all
+              select *
+              from sql_load t2
+              where t2.run_tactis = 'M'
+                and substr(to_char(sysdate, 'yyyymmdd'), 7) = t2.run_date
+              union all
+              select *
+              from sql_load t3
+              where t3.run_tactis = 'BATCH') t
+        where t.running = '0'
+          and t.select_status = '0'
+          and t.table_name = #{tableName}
+    </select>
+
+    <delete id="deleteTactis" parameterType="STRING">
+        delete
+        from ${tableName}
+        where pi_date = #{piDate}
+    </delete>
+
+    <delete id="deleteTactisByPiNumber" parameterType="STRING">
+        delete
+        from ${tableName}
+        where pi_date = #{piDate}
+          and pi_number = #{piNumber}
+    </delete>
+
+    <update id="updateRunBefore" parameterType="STRING">
+        update sql_load t
+        set t.running       = '1',
+            t.select_status = '1'
+        where t.table_name = #{tableName}
+    </update>
+
+    <update id="updateRunAfter" parameterType="STRING">
+        update sql_load t
+        set t.running       = '0',
+            t.run_status    = '1',
+            t.select_status = '0',
+            t.check_status  = #{result}
+        where t.table_name = #{tableName}
+    </update>
+
 
 </mapper>
