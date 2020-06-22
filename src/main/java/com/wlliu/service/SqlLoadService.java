@@ -15,7 +15,7 @@ public class SqlLoadService {
     @Autowired
     SqlLoadDao sqlLoadDao;
 
-    public void initStatus(){
+    public void initStatus() {
         sqlLoadDao.initStatus();
     }
 
@@ -23,11 +23,8 @@ public class SqlLoadService {
         return sqlLoadDao.getAllSqlLoad();
     }
 
-    public List<SqlLoad> getSqlLoadByName(@Param("tableName") String tableName) {
-        return sqlLoadDao.getSqlLoadByName(tableName);
-    }
-
-    public void deleteTactis(@Param("tableName") String tableName, @Param("piDate") String piDate) {
+    public void deleteTactis(@Param("tableName") String tableName,
+                             @Param("piDate") String piDate) {
         sqlLoadDao.deleteTactis(tableName, piDate);
     }
 
@@ -41,8 +38,26 @@ public class SqlLoadService {
         sqlLoadDao.updateRunBefore(tableName);
     }
 
-    public void updateRunAfter(@Param("tableName") String tableName, @Param("result") String result) {
+    public void updateRunAfter(@Param("tableName") String tableName,
+                               @Param("result") String result) {
         sqlLoadDao.updateRunAfter(tableName, result);
+    }
+
+    /*forOne*/
+
+    public List<SqlLoad> getSqlLoadByName(@Param("tableName") String tableName) {
+        return sqlLoadDao.getSqlLoadByName(tableName);
+    }
+
+    public void updateRunBeforeForOne(@Param("tableName") String tableName,
+                                      @Param("piDate") String piDate,
+                                      @Param("piNumber") String piNumber) {
+        sqlLoadDao.updateRunBeforeForOne(tableName, piDate, piNumber);
+    }
+
+    public void updateRunAfterForOne(@Param("tableName") String tableName,
+                                     @Param("result") String result) {
+        sqlLoadDao.updateRunAfterForOne(tableName, result);
     }
 
 }

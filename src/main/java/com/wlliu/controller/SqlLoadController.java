@@ -25,11 +25,6 @@ public class SqlLoadController {
         return sqlLoadService.getAllSqlLoad();
     }
 
-    @GetMapping("getSqlLoadByName")
-    public List<SqlLoad> getSqlLoadByName(String tableName) {
-        return sqlLoadService.getSqlLoadByName(tableName);
-    }
-
     @GetMapping("deleteTactis")
     public void deleteTactis(String tableName, String piDate) {
         sqlLoadService.deleteTactis(tableName, piDate);
@@ -43,6 +38,23 @@ public class SqlLoadController {
     @GetMapping("updateRunAfter")
     public void updateRunAfter(String tableName, String result) {
         sqlLoadService.updateRunAfter(tableName, result);
+    }
+
+    /*forOne*/
+
+    @GetMapping("getSqlLoadByName")
+    public List<SqlLoad> getSqlLoadByName(String tableName) {
+        return sqlLoadService.getSqlLoadByName(tableName);
+    }
+
+    @GetMapping("updateRunBeforeForOne")
+    public void updateRunBeforeForOne(String tableName, String piDate, String piNumber) {
+        sqlLoadService.updateRunBeforeForOne(tableName, piDate, piNumber);
+    }
+
+    @GetMapping("updateRunAfterForOne")
+    public void updateRunAfterForOne(String tableName, String result) {
+        sqlLoadService.updateRunAfterForOne(tableName, result);
     }
 
 }

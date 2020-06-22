@@ -63,6 +63,37 @@
                 end)
     </update>
 
+    <delete id="deleteTactis" parameterType="STRING">
+        delete
+        from ${tableName}
+        where pi_date = #{piDate}
+    </delete>
+
+    <delete id="deleteTactisByPiNumber" parameterType="STRING">
+        delete
+        from ${tableName}
+        where pi_date = #{piDate}
+          and pi_number = #{piNumber}
+    </delete>
+
+    <update id="updateRunBefore" parameterType="STRING">
+        update sql_load t
+        set t.running       = '1',
+            t.select_status = '1'
+        where t.table_name = #{tableName}
+    </update>
+
+    <update id="updateRunAfter" parameterType="STRING">
+        update sql_load t
+        set t.running       = '0',
+            t.run_status    = '1',
+            t.select_status = '0',
+            t.check_status  = #{result}
+        where t.table_name = #{tableName}
+    </update>
+
+    <!--forOne-->
+
     <select id="getSqlLoadByName" parameterType="STRING" resultMap="SqlLoadMap">
         select t.table_name              tableName,
                t.data_path || t.import_source || t.delimiter || t.pi_date || t.delimiter || t.signal_file_name || '_' ||
@@ -98,32 +129,21 @@
           and t.table_name = #{tableName}
     </select>
 
-    <delete id="deleteTactis" parameterType="STRING">
-        delete
-        from ${tableName}
-        where pi_date = #{piDate}
-    </delete>
-
-    <delete id="deleteTactisByPiNumber" parameterType="STRING">
-        delete
-        from ${tableName}
-        where pi_date = #{piDate}
-          and pi_number = #{piNumber}
-    </delete>
-
-    <update id="updateRunBefore" parameterType="STRING">
+    <update id="updateRunBeforeForOne" parameterType="STRING">
         update sql_load t
-        set t.running       = '1',
-            t.select_status = '1'
+        set t.check_status = '0',
+            t.pi_date_bk   = t.pi_date,
+            t.pi_number_bk = t.pi_number,
+            t.pi_date      =#{piDate},
+            t.pi_number    =#{piNumber}
         where t.table_name = #{tableName}
     </update>
 
-    <update id="updateRunAfter" parameterType="STRING">
+    <update id="updateRunAfterForOne" parameterType="STRING">
         update sql_load t
-        set t.running       = '0',
-            t.run_status    = '1',
-            t.select_status = '0',
-            t.check_status  = #{result}
+        set t.pi_date      = t.pi_date_bk,
+            t.pi_number    = t.pi_number_bk,
+            t.check_status =#{result}
         where t.table_name = #{tableName}
     </update>
 
