@@ -53,7 +53,7 @@ public class TestService {
 
             Callable<Product> product2 = new Callable<Product>() {
                 @Override
-                public Product call(){
+                public Product call() {
                     //Product product = vector.remove(0);
                     Product product = vector.remove(0);
                     System.out.println("product2 =========" + product);
